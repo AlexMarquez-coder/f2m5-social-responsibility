@@ -10,10 +10,58 @@ function getUsers() {
 	return $statement->fetchAll();
 }
 
-function getBlogArticles() {
-	$connection = dbConnect();
-	$sql        = "SELECT * FROM `blog`";
-	$statement  = $connection->query( $sql );
+// function getBlogArticles() {
+// 	$connection = dbConnect();
+// 	$sql        = "SELECT * FROM `blog`";
+// 	$statement  = $connection->query( $sql );
 
+// 	return $statement->fetchAll();
+// }
+
+function getAllTopics(){
+	$connection = dbConnect();
+	$sql = 'SELECT * FROM `topics`';
+	$statement = $connection->query($sql);	
+	
 	return $statement->fetchAll();
+
 }
+
+function addTopic($title, $description){
+	$connection = dbConnect();
+	$sql = "INSERT INTO `topics` (`id`, `titel`, `description`) VALUES (NULL, :title, :description);";
+	echo $sql;
+	$statement = $connection->prepare($sql);
+	$result = $statement->execute([
+		'title' => $title,
+		'description' => $description
+	]);
+
+	return $result;
+}
+
+function updateTopic($topicId, $newTitle, $newDescription){
+	$connection = dbConnect();
+		$sql = "UPDATE `topics` SET `titel` = :new_title, `description` = :new_desc WHERE `topics`.`id` = :topic_id;";
+		$statement = $connection->prepare($sql);
+
+		return = $statement->execute([
+			'new_title' => $newTitle,
+			'new_desc' => $newDescription,
+			'topic_id' => $topicId
+		]);
+
+	}
+
+	function deleteTopic($topicToDelete){
+		$connection = dbConnect();
+        	$sql = "DELETE FROM `topics` WHERE `topics`.`id` = :topic_id";
+        	$statement = $connection->prepare($sql);
+        	
+			$statement->execute([
+            	'topic_id' => $topicToDelete
+        	]);
+
+			return $statement->rowCount();
+
+	}
