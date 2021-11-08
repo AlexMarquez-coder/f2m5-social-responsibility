@@ -86,3 +86,74 @@ function current_route_is( $name ) {
 	return false;
 
 }
+
+function validateRegistrationData($data){
+
+
+	$errors = [];
+
+	//Check: valideren of email echt een geldig email is
+	$email      = filter_var($data['email'], FILTER_VALIDATE_EMAIL);
+	$wachtwoord = trim($data['wachtwoord']);
+
+	if ($email === false) {
+		$errors['email'] = 'Geen geldig wachtwoord (minimaal 6 tekens)';
+	}
+
+	// Checks: wachtwoord minimaal 6 tekens bevat
+	if (strlen($wachtwoord) < 6 ) {
+		$errors['wachtwoord'] = 'Geen geldig wachtwoord (minimaal 6 tekens)';
+	}
+
+	// resultaat array
+	$data = [
+		'email' => $data['email'],
+		'wachtwoord' => $wachtwoord
+	];
+
+	return [
+		'data' => $data,
+		'errors' => $errors
+	];
+
+}
+
+
+
+function loginUser($user){
+	$_SESSION['user_id'] = $user['id'];
+}
+
+function logoutUser(){
+	unset($_SESSION['user_id']);
+}
+
+function isLoggedIn(){
+	return !empty($_SESSION['ueser_id']);
+}
+
+function loginCheck(){
+	if ( ! isLoggedIn() ) {
+		$login_url = url('login.form');
+		redirect($login_url);
+	}
+}
+
+function getLoggedInUserEmail(){
+
+	$email = "NIET INGELOGD";
+
+	if(! isLoggedIn()){
+		return $email;
+	}
+
+	$user_id = $_SESSION['user_id'];
+	$user = getUsersById($user_id);
+
+	if($user){
+		$email = $user['email'];
+	}
+
+	return $email;
+}
+	
